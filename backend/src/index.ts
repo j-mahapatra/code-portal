@@ -35,8 +35,29 @@ app.post("/api/v1/user/signup", async (c) => {
 });
 
 // Route for user signin
-app.post("/api/v1/user/signin", (c) => {
-  return c.text("Hello Hono!");
+app.post("/api/v1/user/signin", async (c) => {
+  try {
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    const body = await c.req.json();
+    
+    const user = await prisma.user.findUnique({ where: {
+      email: body.email,
+      password: body.password
+    } })
+
+    if (!user) {
+      return c.json({ message: 'Invalid credentials' }, 404);
+    }
+
+    const token = await sign({ id: user.id, email: user.email }, c.env.JWT_SECRET);
+
+    return c.json({ token });
+  } catch (error) {
+    return c.json({ message: 'User signin failed' }, 500);
+  }
 });
 
 // Route to change blog data
