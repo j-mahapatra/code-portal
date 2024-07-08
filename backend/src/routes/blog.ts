@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { PrismaClient } from '@prisma/client/extension';
+import { PrismaClient } from '@prisma/client/edge';
 import { withAccelerate } from '@prisma/extension-accelerate';
 import { verify } from 'hono/jwt';
 
@@ -48,22 +48,86 @@ blogRouter.use('/*', async (c, next) => {
   }
 });
 
-// Route to change blog data
-blogRouter.post('/', (c) => {
-  return c.text('Hello Hono!');
-});
-
 // Route to create a new blog
-blogRouter.put('/', (c) => {
-  return c.text('Hello Hono!');
+blogRouter.put('/', async (c) => {
+  try {
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    const body = await c.req.json();
+
+    await prisma.post.create({
+      data: {
+        title: body.title,
+        content: body.content,
+        authorId: c.get('userId'),
+      },
+    });
+
+    return c.json({ message: 'Post created' });
+  } catch (error) {
+    return c.json({ message: 'Internal Server Error' }, 500);
+  }
 });
 
-// Route to get a blog's data using its id
-blogRouter.get('/:id', (c) => {
-  return c.text('Hello Hono!');
+// Route to change blog data
+blogRouter.post('/', async (c) => {
+  try {
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    const body = await c.req.json();
+
+    await prisma.post.update({
+      where: {
+        id: body.id,
+      },
+      data: {
+        title: body.title,
+        content: body.content,
+      },
+    });
+
+    return c.json({ message: 'Post updated' });
+  } catch (error) {
+    return c.json({ message: 'Internal Server Error' }, 500);
+  }
 });
 
 // Route to get all blogs
-blogRouter.get('/bulk', (c) => {
-  return c.text('Hello Hono!');
+blogRouter.get('/all', async (c) => {
+  try {
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    const posts = await prisma.post.findMany();
+
+    return c.json({ posts: posts });
+  } catch (error) {
+    return c.json({ message: 'Internal Server Error' }, 500);
+  }
+});
+
+// Route to get a blog's data using its id
+blogRouter.get('/:id', async (c) => {
+  try {
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    const id = c.req.param('id');
+
+    const post = await prisma.post.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    return c.json({ post });
+  } catch (error) {
+    return c.json({ message: 'Internal Server Error' }, 500);
+  }
 });
