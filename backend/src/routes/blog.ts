@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { PrismaClient } from '@prisma/client/edge';
 import { withAccelerate } from '@prisma/extension-accelerate';
 import { verify } from 'hono/jwt';
+import { createBlogBody, updateBlogBody } from '../config/zod';
 
 export const blogRouter = new Hono<{
   Bindings: { DATABASE_URL: string; JWT_SECRET: string };
@@ -57,6 +58,12 @@ blogRouter.put('/', async (c) => {
 
     const body = await c.req.json();
 
+    const { success } = createBlogBody.safeParse(body);
+
+    if (!success) {
+      return c.json({ message: 'Incomplete details' }, 400);
+    }
+
     await prisma.post.create({
       data: {
         title: body.title,
@@ -80,13 +87,19 @@ blogRouter.post('/', async (c) => {
 
     const body = await c.req.json();
 
+    const { success } = updateBlogBody.safeParse(body);
+
+    if (!success || (!body.title && !body.content)) {
+      return c.json({ message: 'Incomplete details' }, 400);
+    }
+
     await prisma.post.update({
       where: {
         id: body.id,
       },
       data: {
-        title: body.title,
-        content: body.content,
+        ...(body.title && { title: body.title }),
+        ...(body.content && { content: body.content }),
       },
     });
 
