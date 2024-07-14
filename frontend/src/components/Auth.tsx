@@ -1,7 +1,10 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import InputField from './ui/InputField';
 import Button from './ui/Button';
+import axios from 'axios';
+import { BACKEND_URL } from '../config/env';
+import toast from 'react-hot-toast';
 
 interface AuthProps {
   type: 'signin' | 'signup';
@@ -14,11 +17,32 @@ interface InputType {
 }
 
 export default function Auth({ type }: AuthProps) {
+  const navigate = useNavigate();
   const [input, setInput] = useState<InputType>({
     name: '',
     email: '',
     password: '',
   });
+
+  const handleAuth = async () => {
+    try {
+      const reqBody = {
+        email: input.email,
+        password: input.password,
+        ...(type === 'signup' ? { name: input.name } : {}),
+      };
+
+      const response =
+        type === 'signup'
+          ? await axios.put(`${BACKEND_URL}/api/v1/user/signup`, reqBody)
+          : await axios.post(`${BACKEND_URL}/api/v1/user/signin`, reqBody);
+
+      localStorage.setItem('token', response?.data?.token);
+      navigate('/blogs');
+    } catch (error) {
+      toast.error(`Failed to ${type}`);
+    }
+  };
 
   return (
     <div className='flex flex-col h-screen justify-center items-center'>
@@ -69,7 +93,7 @@ export default function Auth({ type }: AuthProps) {
         />
         <Button
           label={type === 'signup' ? 'Sign up' : 'Sign in'}
-          onClick={() => {}}
+          onClick={() => handleAuth()}
           cssClasses='mt-5'
         />
       </div>
