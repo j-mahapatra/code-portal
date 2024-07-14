@@ -116,7 +116,21 @@ blogRouter.get('/all', async (c) => {
       datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate());
 
-    const posts = await prisma.post.findMany();
+    const posts = await prisma.post.findMany({
+      where: {
+        authorId: {
+          not: c.get('userId'),
+        },
+      },
+      include: {
+        author: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
 
     return c.json({ posts: posts });
   } catch (error) {
