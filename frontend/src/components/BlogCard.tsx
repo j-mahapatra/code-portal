@@ -1,6 +1,8 @@
+import { useNavigate } from 'react-router-dom';
 import Avatar from './ui/Avatar';
 
 interface BlogCardProps {
+  id: string;
   author: string;
   title: string;
   content: string;
@@ -8,17 +10,23 @@ interface BlogCardProps {
 }
 
 export default function BlogCard({
+  id,
   author,
   title,
   content,
   publishedDate,
 }: BlogCardProps) {
+  const navigate = useNavigate();
+
   const calculateReadTime = (str: string) => {
     return Math.ceil(str.length / 100);
   };
 
   return (
-    <div className='border border-slate-200 shadow p-5 m-5 rounded-lg'>
+    <div
+      className='border border-slate-200 shadow p-5 m-5 rounded-lg cursor-pointer'
+      onClick={() => navigate(`/blogs/${id}`)}
+    >
       <div className='flex space-x-2 mb-2'>
         <Avatar label={author} size='sm' />
         <span className='flex items-center'>{author}</span>
