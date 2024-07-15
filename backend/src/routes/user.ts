@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client/edge';
 import { withAccelerate } from '@prisma/extension-accelerate';
 import { Hono } from 'hono';
-import { sign } from 'hono/jwt';
+import { decode, sign } from 'hono/jwt';
 import { signinBody, signupBody } from '../config/zod';
 
 export const userRouter = new Hono<{
@@ -78,5 +78,39 @@ userRouter.post('/signin', async (c) => {
     return c.json({ token });
   } catch (error) {
     return c.json({ message: 'User signin failed' }, 500);
+  }
+});
+
+// Route for fetching user details
+userRouter.get('/details', async (c) => {
+  try {
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    const authHeader = c.req.header('Authorization');
+    const token = authHeader?.split(' ')?.[1];
+
+    if (!token) {
+      return c.json({ message: 'Unauthorized access' }, 403);
+    }
+
+    const user = decode(token);
+    const id = user?.payload?.id ?? '';
+
+    const userData = await prisma.user.findUnique({
+      where: {
+        id: id as string,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
+
+    return c.json(userData, 200);
+  } catch (error) {
+    return c.json({ message: 'Internal Server Error' }, 500);
   }
 });
