@@ -5,34 +5,35 @@ import toast from 'react-hot-toast';
 import useSession from './useSession';
 import { Blog } from '../config/types';
 
-export default function useBlog() {
+export default function useBlog(id?: string) {
   const { session } = useSession();
   const token = session.token;
-  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [blog, setBlog] = useState<Blog | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    const fetchBlogs = async () => {
+    const fetchBlog = async () => {
       setIsLoading(true);
       try {
-        if (!token) {
+        if (!token || !id) {
+          setBlog(null);
           return;
         }
 
-        const response = await axios.get(`${BACKEND_URL}/api/v1/blog/all`, {
+        const response = await axios.get(`${BACKEND_URL}/api/v1/blog/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setBlogs(response?.data?.posts ?? []);
+        setBlog(response?.data?.post ?? {});
       } catch (error) {
         toast.error('Failed to fetch blogs.');
       }
       setIsLoading(false);
     };
 
-    fetchBlogs();
-  }, [token]);
+    fetchBlog();
+  }, [token, id]);
 
-  return { isLoading, blogs };
+  return { isLoading, blog };
 }
