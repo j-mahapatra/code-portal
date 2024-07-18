@@ -4,6 +4,7 @@ import BlogCard from '../components/BlogCard';
 import Button from '../components/ui/Button';
 import Skeleton from '../components/ui/Skeleton';
 import useBlogs from '../hooks/useBlogs';
+import { formatToDate } from '../utils/date-formatters';
 
 export default function Blogs() {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ export default function Blogs() {
                 id={blog.id}
                 key={blog.title}
                 author={blog.author.name}
-                publishedDate='3 July, 2024'
+                publishedDate={formatToDate(blog.createdAt)}
                 title={blog.title}
                 content={blog.content}
               />
