@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react';
 import { BACKEND_URL } from '../config/env';
 import toast from 'react-hot-toast';
 import useSession from './useSession';
-import { Blogs } from '../config/types';
+import { Blog } from '../config/types';
 
 export default function useBlogs() {
   const { session } = useSession();
   const token = session.token;
-  const [blogs, setBlogs] = useState<Blogs[]>([]);
+  const [blogs, setBlogs] = useState<Blog[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
