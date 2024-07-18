@@ -11,4 +11,6 @@ export interface Blog {
   authorId: string;
   author: User;
   published: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
