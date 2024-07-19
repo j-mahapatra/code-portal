@@ -34,7 +34,7 @@ export default function Blogs() {
               <BlogCard
                 id={blog.id}
                 key={blog.title}
-                author={blog.author.name}
+                author={blog.author}
                 publishedDate={formatToDate(blog.createdAt)}
                 title={blog.title}
                 content={blog.content}
