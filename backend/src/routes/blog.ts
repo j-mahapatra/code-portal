@@ -118,6 +118,9 @@ blogRouter.get('/all', async (c) => {
     }).$extends(withAccelerate());
 
     const posts = await prisma.post.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
       include: {
         author: {
           select: {
