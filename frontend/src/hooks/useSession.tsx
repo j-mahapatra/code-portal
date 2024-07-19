@@ -2,8 +2,10 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { BACKEND_URL } from '../config/env';
 import { User } from '../config/types';
+import { useNavigate } from 'react-router-dom';
 
 export default function useSession() {
+  const navigate = useNavigate();
   const [token, setToken] = useState<string>('');
   const [user, setUser] = useState<User | null>(null);
 
@@ -13,6 +15,7 @@ export default function useSession() {
     const fetchUserDetails = async (token?: string) => {
       if (!token) {
         setUser(null);
+        navigate('/signin');
         return;
       }
 

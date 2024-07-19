@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Signup from './pages/Signup';
 import Signin from './pages/Signin';
@@ -13,6 +13,7 @@ function App() {
       <Routes>
         <Route path='/signup' element={<Signup />} />
         <Route path='/signin' element={<Signin />} />
+        <Route path='/' element={<Navigate to='/signin' replace />} />
         <Route path='/blogs' element={<Blogs />} />
         <Route path='/blogs/publish' element={<PublishBlog />} />
         <Route path='/blogs/:id' element={<BlogDetails />} />
