@@ -6,6 +6,7 @@ interface InputFieldProps {
   value: string;
   onChange: (value: string) => void;
   containerClasses?: string;
+  cssClasses?: string;
 }
 
 export default function InputField({
@@ -16,6 +17,7 @@ export default function InputField({
   value,
   onChange,
   containerClasses,
+  cssClasses,
 }: InputFieldProps) {
   return (
     <div className={containerClasses ?? ''}>
@@ -25,7 +27,7 @@ export default function InputField({
       <input
         type={type}
         id={label}
-        className='bg-slate-200 border border-slate-300 placeholder:text-slate-600 text-sm rounded-lg block w-full p-2.5'
+        className={`bg-slate-200 border border-slate-300 placeholder:text-slate-600 text-sm rounded-lg block w-full p-2.5 ${cssClasses}`}
         placeholder={placeholder}
         required={required}
         value={value}

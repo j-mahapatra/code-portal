@@ -37,7 +37,7 @@ export default function PublishBlog() {
     }
   };
   return (
-    <div className='flex flex-col items-center w-full h-screen'>
+    <div className='flex flex-col items-center w-full h-screen bg-slate-200'>
       <AppBar />
       <div className='flex flex-col w-full h-full max-w-5xl overflow-auto'>
         <div className='flex flex-col w-full items-center px-5'>
@@ -48,6 +48,7 @@ export default function PublishBlog() {
             placeholder={'Enter a suitable title...'}
             label={'Title'}
             containerClasses='my-2 w-full'
+            cssClasses='bg-white'
           />
           <InputTextArea
             value={blog.content}
@@ -57,6 +58,7 @@ export default function PublishBlog() {
             placeholder={"Enter the blog's content"}
             label={'Content'}
             containerClasses='my-2 w-full'
+            cssClasses='bg-white'
           />
           <Button
             label='Publish'

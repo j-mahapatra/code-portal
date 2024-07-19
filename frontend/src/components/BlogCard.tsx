@@ -27,7 +27,7 @@ export default function BlogCard({
 
   return (
     <div
-      className='border border-slate-200 shadow p-5 m-5 rounded-lg cursor-pointer'
+      className='border border-gray-200 hover:shadow-2xl shadow-lg bg-gray-200 p-5 m-5 rounded-md cursor-pointer transition-all max-w-5xl'
       onClick={() => navigate(`/blogs/${id}`)}
     >
       <div className='flex space-x-2 mb-2'>

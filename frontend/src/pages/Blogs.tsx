@@ -11,11 +11,11 @@ export default function Blogs() {
   const { isLoading, blogs } = useBlogs();
 
   return (
-    <div className='flex flex-col items-center w-full h-screen'>
+    <div className='flex flex-col items-center w-full h-screen bg-slate-200'>
       <AppBar />
-      <div className='flex flex-col w-full h-full max-w-5xl overflow-auto'>
+      <div className='flex flex-col w-full h-full overflow-auto items-center'>
         {isLoading ? (
-          <div className='flex flex-col w-full'>
+          <div className='flex flex-col w-full items-center'>
             {Array.from({ length: 4 }).map((_, index) => {
               return <Skeleton key={index} />;
             })}
@@ -30,16 +30,18 @@ export default function Blogs() {
                 }}
               />
             </div>
-            {blogs?.map((blog) => (
-              <BlogCard
-                id={blog.id}
-                key={blog.title}
-                author={blog.author}
-                publishedDate={formatToDate(blog.createdAt)}
-                title={blog.title}
-                content={blog.content}
-              />
-            ))}
+            <div className='flex flex-col w-full items-center'>
+              {blogs?.map((blog) => (
+                <BlogCard
+                  id={blog.id}
+                  key={blog.title}
+                  author={blog.author}
+                  publishedDate={formatToDate(blog.createdAt)}
+                  title={blog.title}
+                  content={blog.content}
+                />
+              ))}
+            </div>
           </div>
         )}
       </div>
